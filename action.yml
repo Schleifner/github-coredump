@@ -11,10 +11,14 @@ runs:
   steps:
     - name: check OS 
       run: |
-        if [ "$RUNNER_OS" = "Linux" ]; then
-          echo "Running on Linux."
-        else
-          echo "not supported os"
+        if [ "$RUNNER_OS" != "Linux" ]; then
+          echo "Not supported OS. This action only supports Ubuntu."
+          exit 1
+        fi
+
+        if ! grep -q "Ubuntu" /etc/os-release; then
+          echo "This action only supports Ubuntu."
+          exit 1
         fi
       shell: bash
 
@@ -36,14 +40,9 @@ runs:
       shell: bash
 
     - name: upload coredump while post step
+      id: coredump-step
       uses: Schleifner/upload-artifact@v1
       with:
         name: coredump
         path: /var/lib/apport/coredump
-
-    - name: upload build_dir while post step
-      if: ${{ inputs.build_dir }}
-      uses: Schleifner/upload-artifact@v1
-      with:
-        name: build_dir
-        path: ${{ inputs.build_dir }}
+        second-path: ${{ inputs.build_dir }}
