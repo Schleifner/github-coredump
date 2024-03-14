@@ -1,0 +1,48 @@
+name: 'coredump upload action'
+description: 'coredumps upload and optional upload build dir'
+inputs:
+  build_dir:
+    description: 'Build dir'
+    required: false
+    type: string
+
+runs:
+  using: "composite"
+  steps:
+    - name: check OS 
+      run: |
+        if [ "$RUNNER_OS" != "Linux" ]; then
+          echo "Not supported OS. This action only supports Ubuntu."
+          exit 1
+        fi
+
+        if ! grep -q "Ubuntu" /etc/os-release; then
+          echo "This action only supports Ubuntu."
+          exit 1
+        fi
+      shell: bash
+
+    - name: set BASH_ENV environment
+      run: |
+        if [ -z "$BASH_ENV" ]; then
+          echo "BASH_ENV=$HOME/.bash_env" >> $GITHUB_ENV
+        fi 
+      shell: bash
+    
+    - name: enable ubuntu coredump collector 
+      run: |
+          if [ ! -f "$BASH_ENV" ]; then
+              touch "$BASH_ENV"
+          fi
+          echo 'ulimit -c unlimited' >> "$BASH_ENV"
+          echo 'ulimit -c unlimited' >> $HOME/.bashrc
+          echo 'ulimit -c unlimited' >> $HOME/.profile
+      shell: bash
+
+    - name: upload coredump while post step
+      id: coredump-step
+      uses: Schleifner/upload-artifact@v1
+      with:
+        name: coredump
+        path: /var/lib/apport/coredump
+        second-path: ${{ inputs.build_dir }}
