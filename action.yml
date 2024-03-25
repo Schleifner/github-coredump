@@ -21,11 +21,14 @@ runs:
           echo "Not supported OS. This action only supports Ubuntu."
           exit 1
         fi
-
         if ! grep -q "Ubuntu" /etc/os-release; then
           echo "This action only supports Ubuntu."
           exit 1
         fi
+      shell: bash
+
+    - name: install requirements
+      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends systemd-coredump zstd
       shell: bash
 
     - name: set BASH_ENV environment
@@ -35,7 +38,7 @@ runs:
         fi 
       shell: bash
     
-    - name: enable ubuntu coredump collector 
+    - name: enable ubuntu coredump collector  
       run: |
           if [ ! -f "$BASH_ENV" ]; then
               touch "$BASH_ENV"
@@ -50,5 +53,5 @@ runs:
       uses: Schleifner/upload-artifact@v1
       with:
         name: ${{ inputs.name }}
-        path: /var/lib/apport/coredump
+        path: /var/lib/systemd/coredump/
         second-path: ${{ inputs.build_dir }}
