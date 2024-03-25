@@ -1,10 +1,10 @@
 # Schleifner/github-coredump
 
-Unpload coredump from ubuntu and unload build_dir optionally
+Upload coredump from ubuntu and unload build_dir optionally
 
 ## Limit
 
-Only support ubuntu, and both enabled apport service.
+Only support ubuntu that has apt package manager.
 
 ## Usage
 
