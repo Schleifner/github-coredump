@@ -11,6 +11,8 @@ Only support ubuntu, and both enabled apport service.
 ```yaml
 - uses: Schleifner/github-coredump@v1
   with:
+    # Optional artifact name.
+    name: 
     # Optional path. upload together with coredump path
     build_dir:
 ```

@@ -1,6 +1,12 @@
 name: 'coredump upload action'
 description: 'coredumps upload and optional upload build dir'
 inputs:
+  name:
+    description: 'artifact name'
+    required: false
+    type: string
+    default: "coredump"
+
   build_dir:
     description: 'Build dir'
     required: false
@@ -43,6 +49,6 @@ runs:
       id: coredump-step
       uses: Schleifner/upload-artifact@v1
       with:
-        name: coredump
+        name: ${{ inputs.name }}
         path: /var/lib/apport/coredump
         second-path: ${{ inputs.build_dir }}
